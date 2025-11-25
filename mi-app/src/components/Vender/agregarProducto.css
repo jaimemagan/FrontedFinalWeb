@@ -1,0 +1,284 @@
+/* src/pages/agregarProducto.css */
+
+.agregar-producto-page {
+  /* ya tiene .contenedor, solo afinamos margen interno */
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.agregar-producto-card {
+  background-color: var(--blanco);
+  border-radius: 1.6rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  padding: 2.4rem 2rem 3rem;
+  max-width: 110rem;
+  margin: 0 auto;
+}
+
+.agregar-producto-card h2 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+/* Form */
+
+.agregar-producto-form {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr;
+  gap: 3rem;
+}
+
+@media (max-width: 880px) {
+  .agregar-producto-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.agregar-producto-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.ap-label {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--fuentePrincipal);
+  color: var(--primarioOscuro);
+  font-size: 1.5rem;
+  gap: 0.4rem;
+}
+
+.ap-input,
+.ap-textarea,
+.ap-select {
+  border-radius: 1.2rem;
+  border: 2px solid var(--secundario);
+  padding: 0.9rem 1.2rem;
+  font-size: 1.5rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  outline: none;
+  background-color: var(--primario);
+}
+
+.ap-input:focus,
+.ap-textarea:focus {
+  border-color: var(--primarioOscuro);
+}
+
+.ap-textarea {
+  resize: vertical;
+}
+
+/* Vista previa imagen */
+
+.ap-preview-wrapper {
+  border-radius: 1.4rem;
+  border: 2px dashed var(--secundario);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ap-preview-titulo {
+  margin: 0;
+  font-family: var(--fuentePrincipal);
+  color: var(--primarioOscuro);
+  font-size: 1.5rem;
+}
+
+.ap-preview-img {
+  max-height: 260px;
+  object-fit: contain;
+}
+
+/* Condición + Categoría en fila */
+
+.ap-flex {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.ap-flex-item {
+  flex: 1;
+}
+
+/* ID de usuario */
+
+.ap-id-usuario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.4rem;
+  font-family: var(--fuentePrincipal);
+  font-size: 1.4rem;
+  color: var(--primarioOscuro);
+}
+
+.ap-id-usuario-valor {
+  background-color: var(--primario);
+  border-radius: 999px;
+  padding: 0.3rem 1rem;
+  border: 1px solid var(--secundario);
+}
+
+/* Botón */
+
+.ap-boton-enviar {
+  margin-top: 1.8rem;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 1.1rem 1.6rem;
+  font-family: var(--fuentePrincipal);
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    var(--secundario),
+    #f1cf7a
+  );
+  color: var(--negro);
+  transition: transform 0.1s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.ap-boton-enviar:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.03);
+}
+
+.ap-boton-enviar:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ap-boton-enviar:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* Mensaje (usa color rojo global) */
+
+.ap-mensaje {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+}
+/* ...todo lo que ya tenías arriba... */
+
+/* ======== SELECT ANIMADO ======== */
+
+.ap-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.ap-select-display {
+  width: 100%;
+  border-radius: 1.2rem;
+  border: 2px solid var(--secundario);
+  padding: 0.9rem 1.2rem;
+  font-size: 1.5rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background-color: var(--primario);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow 150ms ease, transform 120ms ease,
+    border-color 150ms ease, background-color 150ms ease;
+}
+
+.ap-select-display span {
+  pointer-events: none;
+}
+
+/* flechita */
+.ap-select-arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid var(--primarioOscuro);
+  transition: transform 150ms ease;
+}
+
+.ap-select-open .ap-select-arrow {
+  transform: rotate(180deg);
+}
+
+/* efecto al abrir / hover */
+.ap-select-display:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  background-color: #fdf9f2;
+}
+
+.ap-select-open .ap-select-display {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  border-color: var(--primarioOscuro);
+  transform: translateY(-1px);
+}
+
+/* menú desplegable */
+
+.ap-select-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  background-color: var(--blanco);
+  border-radius: 1.2rem;
+  border: 1px solid var(--secundario);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: max-height 220ms ease, opacity 150ms ease,
+    transform 150ms ease;
+  z-index: 50;
+}
+
+.ap-select-open .ap-select-menu {
+  max-height: 220px; /* scroll si hay muchos */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ap-select-option {
+  padding: 0.7rem 1.4rem;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.ap-select-option:hover {
+  background-color: #f6efe2;
+}
+
+.ap-select-option--active {
+  background-color: var(--secundario);
+  color: var(--negro);
+}
+
+.ap-option-nombre {
+  font-family: var(--fuentePrincipal);
+}
+
+.ap-option-id {
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
