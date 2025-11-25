@@ -13,7 +13,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   // Ir a registro (ruta absoluta)
-// Ir a registro 
   const irAVender = () => { navigate("Registro"); };
 
   const handleSubmit = async (e) => {
@@ -22,7 +21,6 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // 👉 Usa tu endpoint de login que devuelve token
       const res = await fetch(`${API_URL}/api/usuarios/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,7 +35,6 @@ export default function Login() {
 
       const data = await res.json(); // { token, expiresAtUtc, user }
 
-      // ✅ Guardar sesión para uso posterior
       localStorage.setItem("token", data.token);
       localStorage.setItem("expiresAtUtc", data.expiresAtUtc);
       localStorage.setItem("user", JSON.stringify(data.user));
