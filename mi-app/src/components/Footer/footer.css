@@ -1,0 +1,115 @@
+/* ===================================================================== */
+/* ===================== FOOTER MINIMALISTA MERCAUCA ==================== */
+/* ===================================================================== */
+
+/* ===== Base del footer (común a ambas versiones) ===== */
+
+.footer-mercauca {
+  color: var(--blanco);
+  font-family: var(--fuentePrincipal);
+}
+
+/* Contenedor interno */
+.footer-inner {
+  max-width: 155rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* MERCAUCA */
+.footer-brand {
+  margin: 0;
+  font-size: 2.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--secundario);
+}
+
+/* Divisor */
+.footer-divider {
+  width: 64%;
+  max-width: 380px;
+  height: 1px;
+  margin: 1.6rem auto 2rem auto;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+}
+
+/* Texto pequeño */
+.footer-copy {
+  margin: 0;
+  font-size: 1.4rem;
+  opacity: 0.75;
+  color: var(--blanco);
+}
+
+/* ===================================================================== */
+/* ===================== VERSIÓN A – BOXED (centrado) ================== */
+/* ===================================================================== */
+
+.footer-mercauca--boxed {
+  background: transparent;
+  padding: 3.6rem 1.6rem 3.2rem;
+  margin-top: 4rem;
+}
+
+.footer-mercauca--boxed .footer-inner {
+  background: var(--primarioOscuro);
+  border-radius: 26px;                 /* << TODAS LAS ESQUINAS */
+  padding: 3rem 2rem 2.4rem;
+
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+/* ===================================================================== */
+/* ===================== VERSIÓN B – FULL WIDTH ======================== */
+/* ===================================================================== */
+
+.footer-mercauca--full {
+  width: 100%;
+  background: var(--primarioOscuro);
+  padding: 4rem 1.6rem 3.6rem;
+  margin-top: 4rem;
+
+  /* << TODAS las esquinas redondeadas */
+  border-radius: 26px;
+  
+  /* sombra suave arriba y abajo */
+  box-shadow:
+    0 -6px 25px rgba(0, 0, 0, 0.28),
+    0 6px 25px rgba(0, 0, 0, 0.22);
+}
+
+/* El inner no necesita fondo */
+.footer-mercauca--full .footer-inner {
+  padding: 0;
+}
+
+/* ===================================================================== */
+/* =========================== RESPONSIVE =============================== */
+/* ===================================================================== */
+
+@media (max-width: 600px) {
+  .footer-brand {
+    font-size: 2.4rem;
+    letter-spacing: 0.18em;
+  }
+
+  .footer-copy {
+    font-size: 1.3rem;
+  }
+
+  .footer-mercauca--boxed .footer-inner {
+    padding: 2.6rem 1.4rem 2.2rem;
+    border-radius: 22px;
+  }
+
+  .footer-mercauca--full {
+    border-radius: 22px;
+    padding: 3.2rem 1.2rem 3rem;
+  }
+}
