@@ -203,7 +203,7 @@ export default function Topbar({ onCartClick }) {
           <input
             type="search"
             name="q"
-            placeholder="Buscar productos..."
+            placeholder="Buscar joyas, anillos, collares…"
             aria-label="Buscar"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

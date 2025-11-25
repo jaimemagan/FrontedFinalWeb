@@ -89,25 +89,25 @@ const AgregarProducto = () => {
   const [cargando, setCargando] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
-useEffect(() => {
-  const userData = localStorage.getItem("user");
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
 
-  if (userData) {
-    try {
-      const userObj = JSON.parse(userData);
+    if (userData) {
+      try {
+        const userObj = JSON.parse(userData);
 
-      if (userObj && userObj.idUsuario) {
-        setIdUsuario(userObj.idUsuario);
-      } else {
-        console.warn("No se encontró idUsuario dentro de user");
+        if (userObj && userObj.idUsuario) {
+          setIdUsuario(userObj.idUsuario);
+        } else {
+          console.warn("No se encontró idUsuario dentro de user");
+        }
+      } catch (error) {
+        console.error("Error al parsear user:", error);
       }
-    } catch (error) {
-      console.error("Error al parsear user:", error);
+    } else {
+      console.warn("No hay usuario en localStorage");
     }
-  } else {
-    console.warn("No hay usuario en localStorage");
-  }
-}, []);
+  }, []);
 
   const handleImagenChange = (e) => {
     const file = e.target.files[0];
@@ -165,34 +165,71 @@ useEffect(() => {
     }
   };
 
+  const isSuccessMessage =
+    mensaje && mensaje.toLowerCase().includes("correctamente");
+
   return (
     <main className="contenedor agregar-producto-page">
       <section className="agregar-producto-card">
-        <h2>Vender producto</h2>
+        <header className="ap-header">
+          <div className="ap-header-left">
+            <span className="ap-badge-mercauca">MercaUca · Vender</span>
+            <h2 className="ap-title">Publicar un producto</h2>
+            <p className="ap-subtitle">
+              Sube una buena foto, describe tu producto y ponlo a la venta en el
+              catálogo de MercaUca.
+            </p>
+          </div>
+          <div className="ap-header-right">
+            <span className="ap-step-pill">Paso 1 de 1</span>
+            <span className="ap-step-hint">Formulario de publicación</span>
+          </div>
+        </header>
 
         <form className="agregar-producto-form" onSubmit={handleSubmit}>
           {/* Columna imagen */}
           <div className="agregar-producto-columna">
-            <label className="ap-label">
-              Imagen del producto
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImagenChange}
-                className="ap-input"
-              />
-            </label>
+            <div className="ap-upload-card">
+              <label className="ap-label ap-label-upload">
+                <span className="ap-label-text">Imagen del producto</span>
 
-            {preview && (
-              <div className="ap-preview-wrapper">
-                <p className="ap-preview-titulo">Vista previa</p>
-                <img
-                  src={preview}
-                  alt="Vista previa producto"
-                  className="ap-preview-img"
+                <div className="ap-upload-dropzone">
+                  <div className="ap-upload-icon">📷</div>
+                  <div className="ap-upload-main">
+                    Haz clic para seleccionar una imagen
+                  </div>
+                  <div className="ap-upload-sub">
+                    JPEG o PNG recomendados · Ideal 1024×1024px
+                  </div>
+                  <div className="ap-upload-hint">
+                    Una buena foto ayuda a vender más rápido.
+                  </div>
+                </div>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImagenChange}
+                  className="ap-input-file"
                 />
-              </div>
-            )}
+              </label>
+
+              {preview && (
+                <div className="ap-preview-wrapper">
+                  <div className="ap-preview-header">
+                    <p className="ap-preview-titulo">Vista previa</p>
+                    <span className="ap-preview-chip">Se verá así en el catálogo</span>
+                  </div>
+                  <div className="ap-preview-img-frame">
+                    <img
+                      src={preview}
+                      alt="Vista previa producto"
+                      className="ap-preview-img"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Columna datos */}
@@ -204,6 +241,7 @@ useEffect(() => {
                 value={titulo}
                 onChange={(e) => setTitulo(e.target.value)}
                 className="ap-input"
+                placeholder="Ej. Reloj de pulsera clásico de acero inoxidable"
                 required
               />
             </label>
@@ -215,6 +253,7 @@ useEffect(() => {
                 onChange={(e) => setDescripcion(e.target.value)}
                 className="ap-textarea ap-input"
                 rows={4}
+                placeholder="Describe el estado, características, tamaño, color, etc."
                 required
               />
             </label>
@@ -226,6 +265,7 @@ useEffect(() => {
                 value={marca}
                 onChange={(e) => setMarca(e.target.value)}
                 className="ap-input"
+                placeholder="Ej. Casio, Samsung, sin marca…"
               />
             </label>
 
@@ -260,12 +300,13 @@ useEffect(() => {
                 value={precio}
                 onChange={(e) => setPrecio(e.target.value)}
                 className="ap-input"
+                placeholder="Ej. 19.99"
                 required
               />
             </label>
 
             <div className="ap-id-usuario">
-              <span>ID Usuario:</span>
+              <span>ID Usuario</span>
               <span className="ap-id-usuario-valor">
                 {idUsuario || "No disponible"}
               </span>
@@ -276,10 +317,26 @@ useEffect(() => {
               className="ap-boton-enviar"
               disabled={cargando}
             >
-              {cargando ? "Publicando..." : "Publicar producto"}
+              <span className="ap-boton-main">
+                {cargando ? "Publicando producto…" : "Publicar producto"}
+              </span>
+              <span className="ap-boton-sub">
+                Se añadirá al catálogo de MercaUca
+              </span>
             </button>
 
-            {mensaje && <p className="ap-mensaje">{mensaje}</p>}
+            {mensaje && (
+              <p
+                className={
+                  "ap-mensaje " +
+                  (isSuccessMessage
+                    ? "ap-mensaje--success"
+                    : "ap-mensaje--error")
+                }
+              >
+                {mensaje}
+              </p>
+            )}
           </div>
         </form>
       </section>

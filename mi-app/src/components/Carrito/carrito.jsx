@@ -13,6 +13,7 @@ export default function CartPopup({ open, onClose }) {
   const [error, setError] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false); // <-- popup confirmación
   const navigate = useNavigate();
 
   //  CARGAR CARRITO DESDE LA API CUANDO SE ABRE EL POPUP
@@ -50,15 +51,12 @@ export default function CartPopup({ open, onClose }) {
           return;
         }
 
-        const res = await fetch(
-          `${API_URL}/api/Carrito/${usuario}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${rawToken}`,
-            },
-          }
-        );
+        const res = await fetch(`${API_URL}/api/Carrito/${usuario}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${rawToken}`,
+          },
+        });
 
         if (!res.ok) {
           console.error("Error al obtener carrito:", res.status);
@@ -75,14 +73,13 @@ export default function CartPopup({ open, onClose }) {
         // data = array de CarritoItemDto:
         // { idProducto, tituloProducto, fotoBase64, precio, cantidad }
         const mapped = data.map((item, index) => ({
-          id: item.idProducto || index,
+          id: item.idProducto || index, // <- este ID se usa para eliminar (debe ser IdProductoVariante)
           name: item.tituloProducto,
           sku: `#${item.idProducto || "N/A"}`,
           color: "N/A",
           extra: "",
           unitPrice: Number(item.precio ?? 0),
           quantity: item.cantidad,
-          // imagen en base64 que viene del backend
           image: item.fotoBase64 || "",
         }));
 
@@ -109,17 +106,64 @@ export default function CartPopup({ open, onClose }) {
   const shippingCost = shippingMode === "home" ? 9.9 : 0;
   const total = subtotal + shippingCost;
 
-  const handleQtyChange = (id, delta) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, quantity: Math.max(1, p.quantity + delta) }
-          : p
-      )
-    );
+  // ===== ELIMINAR ARTÍCULO DEL CARRITO =====
+  const handleRemoveItem = async (productId) => {
+    try {
+      setError("");
+
+      const rawUser = localStorage.getItem("user");
+      const rawToken = localStorage.getItem("token");
+
+      if (!rawUser || !rawToken) {
+        navigate("/Login");
+        onClose && onClose();
+        return;
+      }
+
+      let parsedUser = null;
+      try {
+        parsedUser = JSON.parse(rawUser);
+      } catch {
+        parsedUser = null;
+      }
+
+      const finalUser = parsedUser?.user || parsedUser || null;
+      const usuario = finalUser?.idUsuario || finalUser?.idComprador;
+
+      if (!usuario) {
+        console.error("No se encontró usuario en localStorage para eliminar artículo");
+        navigate("/Login");
+        onClose && onClose();
+        return;
+      }
+
+      const res = await fetch(
+        `${API_URL}/api/Carrito/eliminar-articulo/${usuario}/${productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${rawToken}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Error al eliminar artículo:", res.status);
+        const text = await res.text().catch(() => "");
+        console.error("Detalle error eliminar artículo:", text);
+        setError("No se pudo eliminar el artículo del carrito.");
+        return;
+      }
+
+      // Si todo bien, quitarlo del estado local
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+    } catch (err) {
+      console.error("Error inesperado al eliminar artículo:", err);
+      setError("Ocurrió un error inesperado al eliminar el artículo.");
+    }
   };
 
-  // ===== FINALIZAR COMPRA =====
+  // ===== FINALIZAR COMPRA (LLAMADO DESDE EL POPUP DE CONFIRMACIÓN) =====
   const handleCheckout = async () => {
     if (!products.length) {
       alert("Tu carrito está vacío.");
@@ -156,7 +200,6 @@ export default function CartPopup({ open, onClose }) {
         return;
       }
 
-      // Endpoint
       const res = await fetch(
         `${API_URL}/api/Carrito/finalizar-compra/${usuario}`,
         {
@@ -174,12 +217,12 @@ export default function CartPopup({ open, onClose }) {
         setError("No se pudo finalizar la compra.");
         return;
       }
+
       setProducts([]);
 
-      // Animacion
+      // Animación de éxito
       setSuccess(true);
 
-      // Cerrado de popup 'carrito'
       setTimeout(() => {
         setSuccess(false);
         onClose && onClose();
@@ -192,19 +235,34 @@ export default function CartPopup({ open, onClose }) {
     }
   };
 
+  // Botón "Terminar pedido" ahora solo abre el popup de confirmación
+  const handleOpenConfirm = () => {
+    if (!products.length) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+    setShowConfirm(true);
+  };
+
+  const handleConfirmCheckout = async () => {
+    setShowConfirm(false);
+    await handleCheckout();
+  };
+
   return (
     <div className="cart-overlay" onClick={onClose}>
       <div
         className="cart-modal"
         onClick={(e) => e.stopPropagation()}
       >
-
         {/* HEADER */}
         <header className="cart-header">
           <div className="cart-header-left">
             <span className="cart-badge-mercauca">MercaUca</span>
             <h2 className="cart-title">Tu carrito</h2>
-            <p className="cart-subtitle">Revisa tus productos antes de confirmar tu pedido</p>
+            <p className="cart-subtitle">
+              Revisa tus productos antes de confirmar tu pedido
+            </p>
           </div>
 
           <button className="cart-ghost-button" onClick={onClose}>
@@ -213,9 +271,7 @@ export default function CartPopup({ open, onClose }) {
         </header>
 
         {/* ESTADO DE CARGA / ERROR */}
-        {loading && (
-          <p className="cart-status">Cargando carrito…</p>
-        )}
+        {loading && <p className="cart-status">Cargando carrito…</p>}
         {error && !loading && (
           <p className="cart-status cart-status-error">{error}</p>
         )}
@@ -227,6 +283,7 @@ export default function CartPopup({ open, onClose }) {
             <span className="cart-col-price">Precio unitario</span>
             <span className="cart-col-qty">QTY</span>
             <span className="cart-col-total">TOTAL</span>
+            <span className="cart-col-actions">Acciones</span>
           </div>
         )}
 
@@ -266,24 +323,23 @@ export default function CartPopup({ open, onClose }) {
                   {formatPrice(product.unitPrice)}
                 </div>
 
+                {/* QTY SOLO LECTURA */}
                 <div className="cart-col-qty">
-                  <button
-                    className="qty-btn"
-                    onClick={() => handleQtyChange(product.id, -1)}
-                  >
-                    −
-                  </button>
                   <span className="qty-value">{product.quantity}</span>
-                  <button
-                    className="qty-btn"
-                    onClick={() => handleQtyChange(product.id, 1)}
-                  >
-                    +
-                  </button>
                 </div>
 
                 <div className="cart-col-total">
                   {formatPrice(lineTotal)}
+                </div>
+
+                {/* BOTÓN ELIMINAR */}
+                <div className="cart-col-actions">
+                  <button
+                    className="cart-remove-btn"
+                    onClick={() => handleRemoveItem(product.id)}
+                  >
+                    ✕ Quitar
+                  </button>
                 </div>
               </div>
             );
@@ -355,18 +411,46 @@ export default function CartPopup({ open, onClose }) {
 
             <button
               className="checkout-btn"
-              onClick={handleCheckout}
+              onClick={handleOpenConfirm}
               disabled={checkingOut || loading || !products.length}
             >
               {checkingOut ? "Procesando..." : "Terminar Pedido"}
-              <span className="checkout-amount">
-                {formatPrice(total)}
-              </span>
+              <span className="checkout-amount">{formatPrice(total)}</span>
             </button>
           </div>
         </section>
 
-        {/* ANIMACIÓN DE CONFIRMACIÓN */}
+        {/* POPUP DE CONFIRMACIÓN DE COMPRA */}
+        {showConfirm && (
+          <div className="cart-confirm-overlay">
+            <div className="cart-confirm-modal">
+              <h3 className="cart-confirm-title">Confirmar compra</h3>
+              <p className="cart-confirm-text">
+                Vas a realizar un pedido por <strong>{formatPrice(total)}</strong>.
+                <br />
+                ¿Deseas continuar?
+              </p>
+              <div className="cart-confirm-actions">
+                <button
+                  className="cart-confirm-cancel"
+                  onClick={() => setShowConfirm(false)}
+                  disabled={checkingOut}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="cart-confirm-ok"
+                  onClick={handleConfirmCheckout}
+                  disabled={checkingOut}
+                >
+                  Sí, confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ANIMACIÓN DE CONFIRMACIÓN FINAL */}
         {success && (
           <div className="cart-success-overlay">
             <div className="cart-success-modal">

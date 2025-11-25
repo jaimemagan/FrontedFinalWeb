@@ -1,17 +1,11 @@
-/* ===================================================================== */
-/* ===================== PRODUCT DETAIL – MERCAUCA UI ================== */
-/* ===================================================================== */
-
 .product-page {
-  background: var(--primario);
+  /* Fondo más vivo tipo MercaUca */
+  background: radial-gradient(circle at top left, #fee2e2 0, #f3f4f6 40%, #e5e7eb 100%);
   min-height: 100vh;
   padding: 2.4rem 0 4rem;
   font-family: var(--fuentePrincipal);
 }
 
-/* ===================================================================== */
-/* ===================== BOTÓN REGRESAR – NUEVO DISEÑO ================= */
-/* ===================================================================== */
 
 .pd-back-wrap {
   max-width: 155rem;
@@ -21,25 +15,20 @@
   justify-content: flex-start;
 }
 
-/* Botón tipo pill, claro, limpio */
 .pd-back-btn {
   border-radius: 999px;
   border: none;
   background: #ffffff;
   color: #111111;
-
   padding: 0.8rem 1.9rem 0.8rem 0.9rem;
-
   display: inline-flex;
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-
   font-family: var(--fuentePrincipal);
   font-size: 1.5rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
   transition:
     background 0.18s ease,
@@ -48,7 +37,6 @@
     color 0.18s ease;
 }
 
-/* Circulito de la flecha */
 .pd-back-icon {
   width: 30px;
   height: 30px;
@@ -56,18 +44,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   font-size: 1.7rem;
   background: var(--primarioOscuro);
   color: var(--blanco);
 }
 
-/* Texto principal */
 .pd-back-label {
   white-space: nowrap;
 }
 
-/* Hover / Active */
 .pd-back-btn:hover {
   background: #f5f5f5;
   transform: translateY(-1px);
@@ -79,7 +64,6 @@
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
 }
 
-/* Móvil */
 @media (max-width: 600px) {
   .pd-back-wrap {
     padding: 0 1rem;
@@ -91,9 +75,6 @@
   }
 }
 
-/* ===================================================================== */
-/* ===================== LAYOUT PRINCIPAL ============================== */
-/* ===================================================================== */
 
 .pd-layout {
   max-width: 155rem;
@@ -105,17 +86,21 @@
   align-items: flex-start;
 }
 
-/* ===================================================================== */
-/* ===================== TARJETA DE IMAGEN ============================= */
-/* ===================================================================== */
 
 .pd-image-card {
-  background: #f4f3f0;
+  border-radius: 26px;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #fecaca, #fee2e2, #ffffff);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+.pd-image-inner {
+  position: relative;
   border-radius: 22px;
-  padding: 0;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+  background: radial-gradient(circle at top, #fef2f2 0, #e5e7eb 50%, #d1d5db 100%);
+  min-height: 320px;
 }
 
 .pd-image {
@@ -124,28 +109,137 @@
   height: 100%;
   max-height: 620px;
   object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-/* ===================================================================== */
-/* ===================== INFO – COLUMNA DERECHA ======================== */
-/* ===================================================================== */
+.pd-image-card:hover .pd-image {
+  transform: scale(1.06);
+  filter: saturate(1.05);
+}
+
+/* capa suave encima para el efecto */
+.pd-image-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.0) 45%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  pointer-events: none;
+}
+
+/* Badge “MercaUca” en esquina */
+.pd-image-badge {
+  position: absolute;
+  top: 1.4rem;
+  left: 1.4rem;
+  padding: 0.45rem 1.4rem;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.92);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.pd-image-badge-main {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rojo);
+}
+
+.pd-image-badge-sub {
+  font-size: 1.05rem;
+  color: #4b5563;
+}
+
+/* Etiqueta de precio flotante */
+.pd-image-price-tag {
+  position: absolute;
+  bottom: 1.6rem;
+  right: 1.6rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.7);
+}
+
+.pd-image-price-label {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #9ca3af;
+}
+
+.pd-image-price-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+}
+
 
 .pd-info {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.2rem;
+}
+
+/* Bloque superior: chip + título + meta */
+.pd-header-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pd-chip-category {
+  align-self: flex-start;
+  padding: 0.35rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  font-size: 1.15rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #4b5563;
 }
 
 .pd-title {
   margin: 0;
   text-align: left;
   color: var(--secundario);
-  font-size: clamp(2.6rem, 3vw, 3.2rem);
+  font-size: clamp(2.6rem, 3vw, 3.3rem);
 }
 
-/* ===================================================================== */
-/* ===================== PRECIO UNITARIO =============================== */
-/* ===================================================================== */
+.pd-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.pd-meta-pill {
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  font-size: 1.15rem;
+  color: #374151;
+}
+
+.pd-meta-pill-soft {
+  background: rgba(239, 246, 255, 0.9);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #1d4ed8;
+}
+
 
 .pd-price-row {
   display: flex;
@@ -166,20 +260,14 @@
   color: #111;
 }
 
-/* ===================================================================== */
-/* ===================== CANTIDAD + TOTAL ============================== */
-/* ===================================================================== */
-
 .pd-summary-card {
   border-radius: 18px;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 1.6rem 1.8rem;
-
+  padding: 1.8rem 1.9rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.6rem;
-
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
 }
 
@@ -219,15 +307,25 @@
   transition: background 0.15s ease, transform 0.12s ease;
 }
 
-.pd-qty-btn:hover {
+.pd-qty-btn:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
+}
+
+.pd-qty-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .pd-qty-value {
   font-size: 1.8rem;
   min-width: 2.4rem;
   text-align: center;
+}
+
+.pd-qty-hint {
+  font-size: 1.2rem;
+  color: #6b7280;
 }
 
 /* TOTAL BLOCK */
@@ -253,9 +351,11 @@
   color: var(--secundario);
 }
 
-/* ===================================================================== */
-/* ===================== DESCRIPCIÓN =================================== */
-/* ===================================================================== */
+.pd-total-hint {
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
 
 .pd-description {
   margin-top: 0.5rem;
@@ -275,39 +375,76 @@
   color: #333;
 }
 
-/* ===================================================================== */
-/* ===================== BOTÓN AGREGAR ================================ */
-/* ===================================================================== */
 
 .pd-add-btn {
-  margin-top: 1rem;
+  margin-top: 1.4rem;
   align-self: flex-start;
-
   border-radius: 999px;
   border: none;
-
-  padding: 1.15rem 3rem;
+  padding: 1.1rem 2.4rem;
   background: var(--secundario);
   color: var(--blanco);
-
   font-size: 1.7rem;
   cursor: pointer;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-
+  display: inline-flex;
+  align-items: center;
+  gap: 1.6rem;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
-  transition: background 0.22s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background 0.22s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.18s ease;
 }
 
-.pd-add-btn:hover {
+.pd-add-btn-elevated {
+  padding-right: 2.8rem;
+}
+
+.pd-add-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.pd-add-main {
+  font-size: 1.55rem;
+}
+
+.pd-add-sub {
+  font-size: 1.3rem;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+.pd-add-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+}
+
+.pd-add-btn:hover:not(:disabled) {
   background: var(--primarioOscuro);
   transform: translateY(-1px);
   box-shadow: 0 24px 55px rgba(0, 0, 0, 0.28);
+  filter: brightness(1.03);
 }
 
-/* ===================================================================== */
-/* ===================== ESTADOS DE CARGA / ERROR ===================== */
-/* ===================================================================== */
+.pd-add-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+}
+
 
 .pd-status {
   text-align: center;
@@ -325,11 +462,13 @@
   .pd-summary-card {
     grid-template-columns: 1fr;
   }
+
+  .pd-image-card {
+    max-width: 640px;
+    margin: 0 auto;
+  }
 }
 
-/* ===================================================================== */
-/* ===================== POPUP / TOAST MERCAUCA ======================== */
-/* ===================================================================== */
 
 .pd-toast-overlay {
   position: fixed;
@@ -355,21 +494,6 @@
   animation: pd-toast-pop 0.3s ease-out;
 }
 
-.pd-toast-logo {
-  position: absolute;
-  top: -26px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primarioOscuro);
-  color: var(--blanco);
-  padding: 0.6rem 1.8rem;
-  border-radius: 999px;
-  font-size: 1.35rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
-}
-
 .pd-toast-icon {
   width: 68px;
   height: 68px;
@@ -382,12 +506,6 @@
   box-shadow: 0 0 25px rgba(0,0,0,0.12);
 }
 
-.pd-toast-message {
-  font-size: 1.6rem;
-  line-height: 1.5;
-  margin-top: 0.4rem;
-}
-
 .pd-toast-success .pd-toast-icon {
   background: #e8f7ee;
   color: #1f8f4d;
@@ -396,6 +514,12 @@
 .pd-toast-error .pd-toast-icon {
   background: #fdecec;
   color: #c0392b;
+}
+
+.pd-toast-message {
+  font-size: 1.6rem;
+  line-height: 1.5;
+  margin-top: 0.4rem;
 }
 
 @keyframes pd-toast-pop {
@@ -410,10 +534,6 @@
 }
 
 @keyframes pd-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

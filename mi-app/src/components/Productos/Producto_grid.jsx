@@ -2,10 +2,7 @@
 import PropTypes from "prop-types";
 import ProductoCard from "./Producto_card";
 
-/**
- * Normaliza la imagen: si viene como imgSrc la usa,
- * si viene como base64 en Foto, la convierte a data URL.
- */
+
 function resolverImgSrc(p) {
   if (p.imgSrc) return p.imgSrc;
   if (p.Foto) return `data:image/jpeg;base64,${p.Foto}`;

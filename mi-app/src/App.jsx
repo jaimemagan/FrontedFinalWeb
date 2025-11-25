@@ -48,11 +48,12 @@ function App() {
             <>
               <Novedades />
               <PaginaNovedades />
-               <Footer />
+              <Footer />
             </>
           }
         />
         <Route path="/vender" element={<AgregarProductos />} />
+        
 
         {/* Detalle de producto */}
         <Route path="/producto/:id" element={<ProductDetail />} />

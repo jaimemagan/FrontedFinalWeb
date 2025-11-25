@@ -37,13 +37,6 @@ export default function Destacados() {
               <div className="slide__left bg-verde">
                 <h2 className="slide__title">Compra y vende artículos</h2>
                 <p className="slide__text">Desde la comodidad de tu casa.</p>
-                <button className="cta" type="button" aria-label="Explora ahora">
-                  <span>Explora ahora</span>
-                  <svg width="15" height="10" viewBox="0 0 13 10" aria-hidden="true">
-                    <path d="M1,5 L11,5"></path>
-                    <polyline points="8 1 12 5 8 9"></polyline>
-                  </svg>
-                </button>
               </div>
               <div className="slide__right">
                 <img
@@ -61,13 +54,6 @@ export default function Destacados() {
               <div className="slide__left bg-vino">
                 <h2 className="slide__title">Lujo que habla por ti</h2>
                 <p className="slide__text">Joyas únicas en oro y plata.</p>
-                <button className="cta" type="button" aria-label="Ver colección">
-                  <span>Ver colección</span>
-                  <svg width="15" height="10" viewBox="0 0 13 10" aria-hidden="true">
-                    <path d="M1,5 L11,5"></path>
-                    <polyline points="8 1 12 5 8 9"></polyline>
-                  </svg>
-                </button>
               </div>
               <div className="slide__right">
                  {/* Muestra la imagenm del array del JSON o muestra una imagen temporal si aun no se carga la imagen regresada por wel API*/}
@@ -86,13 +72,6 @@ export default function Destacados() {
               <div className="slide__left bg-azul">
                 <h2 className="slide__title">Ofertas de temporada</h2>
                 <p className="slide__text">Descuentos limitados.</p>
-                <button className="cta" type="button" aria-label="Aprovecha">
-                  <span>Aprovecha</span>
-                  <svg width="15" height="10" viewBox="0 0 13 10" aria-hidden="true">
-                    <path d="M1,5 L11,5"></path>
-                    <polyline points="8 1 12 5 8 9"></polyline>
-                  </svg>
-                </button>
               </div>
               <div className="slide__right">
                 <img

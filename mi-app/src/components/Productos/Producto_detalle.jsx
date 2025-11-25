@@ -9,9 +9,6 @@ export default function ProductoDetalle() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Producto que puede venir desde:
-  // - popup de búsqueda (fotoBase64 / foto)
-  // - grid (imgSrc)
   const productoInicial = location.state?.producto || null;
 
   const [producto, setProducto] = useState(productoInicial);
@@ -20,24 +17,20 @@ export default function ProductoDetalle() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
 
-  // Popup bonito para mostrar mensajes (agregado / ya existe / error)
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackType, setFeedbackType] = useState("success"); // "success" | "error"
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
-  // Función rápida para disparar el popup
   const showFeedback = (type, message) => {
     setFeedbackType(type);
     setFeedbackMessage(message);
     setFeedbackOpen(true);
 
-    // Que el popup se cierre solo después de un ratito
     setTimeout(() => {
       setFeedbackOpen(false);
     }, 2300);
   };
 
-  // Traer detalle del producto desde la API
   useEffect(() => {
     const fetchDetalle = async () => {
       try {
@@ -55,11 +48,10 @@ export default function ProductoDetalle() {
           setDescripcion(data.descripcion);
         }
 
-        // Si venimos directo del grid, armamos el objeto aquí
         if (!productoInicial) {
           setProducto({
             idProducto: data.idProducto,
-            idProductoVariante: data.idProductoVariante, // si existe
+            idProductoVariante: data.idProductoVariante,
             tituloProducto: data.tituloProducto,
             precio: data.precio,
             fotoBase64: data.fotoBase64,
@@ -81,30 +73,31 @@ export default function ProductoDetalle() {
   const incrementar = () => setCantidad((c) => c + 1);
   const decrementar = () => setCantidad((c) => (c > 1 ? c - 1 : 1));
 
-  // ===== PRECIOS =====
   const unitPrice = Number(producto?.precio ?? 0);
   const totalPrice = unitPrice * cantidad;
 
-  // Imagen del producto (probamos varias propiedades por si viene de fuentes distintas)
   const imageSrc =
     producto?.fotoBase64 ||
     producto?.foto ||
-    producto?.imgSrc || // viene del grid
+    producto?.imgSrc ||
     "";
 
-  // Agregar al carrito
+  const codigoProducto =
+    producto?.idProductoVariante ||
+    producto?.idProducto ||
+    producto?.id ||
+    "N/A";
+
   const handleAddToCart = async () => {
     if (!producto) return;
 
     try {
       setAdding(true);
 
-      // Revisamos que haya usuario logueado
       const rawUser = localStorage.getItem("user");
       const rawToken = localStorage.getItem("token");
 
       if (!rawUser || !rawToken) {
-        // Si no hay sesión, lo mandamos al login
         navigate("/Login");
         return;
       }
@@ -117,8 +110,6 @@ export default function ProductoDetalle() {
       }
 
       const finalUser = parsedUser?.user || parsedUser || null;
-
-      // El backend espera IdUsuario (o IdComprador, por si acaso)
       const idUsuario = finalUser?.idUsuario || finalUser?.idComprador;
 
       if (!idUsuario) {
@@ -127,51 +118,42 @@ export default function ProductoDetalle() {
         return;
       }
 
-      // Tomamos el id de variante o, en su defecto, el id del producto
       const idProductoVariante =
         producto.idProductoVariante ||
         producto.idProducto ||
         producto.id;
 
-      // Precio total (unidad * cantidad)
       const precioTotal = totalPrice;
 
-      // Payload para el endpoint de agregar al carrito
       const payload = {
-        idUsuario,          // dueño del carrito
-        idProductoVariante, // qué variante / producto estamos metiendo
-        cantidad,           // cuántos
+        idUsuario,
+        idProductoVariante,
+        cantidad,
         precio: precioTotal,
         moneda: "USD",
       };
 
       console.log("Payload agregar-articulo:", payload);
 
-      const res = await fetch(
-        `${API_URL}/api/Carrito/agregar-articulo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${rawToken}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${API_URL}/api/Carrito/agregar-articulo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${rawToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-      // Intentamos leer el cuerpo como JSON para agarrar el "mensaje"
       let mensaje = "";
       try {
         const data = await res.json();
         mensaje = data?.mensaje || "";
       } catch {
-        // Si el backend no manda JSON o truena, no pasa nada, usamos mensajes genéricos
+        // si no hay JSON, mensaje genérico
       }
 
       if (!res.ok) {
-        // Si la API responde error, mostramos el mensaje que venga o uno genérico
         if (mensaje) {
-          // Por ejemplo: "El artículo ya está en el carrito."
           showFeedback("error", mensaje);
         } else {
           showFeedback("error", "No se pudo agregar al carrito.");
@@ -179,9 +161,7 @@ export default function ProductoDetalle() {
         return;
       }
 
-      // Si todo salió bien, mensaje bonito
       if (mensaje) {
-        // Puede ser "Artículo agregado correctamente." o algo similar
         showFeedback("success", mensaje);
       } else {
         showFeedback("success", "Producto agregado al carrito ✅");
@@ -194,7 +174,6 @@ export default function ProductoDetalle() {
     }
   };
 
-  // ===== ESTADOS DE CARGA / ERROR =====
   if (!producto && loading) {
     return (
       <main className="product-page">
@@ -216,29 +195,20 @@ export default function ProductoDetalle() {
     return (
       <main className="product-page">
         <div className="pd-back-wrap">
-          <div className="pd-back-wrap">
-            <button
-              type="button"
-              className="pd-back-btn"
-              onClick={handleBack}
-            >
-              <span className="pd-back-icon">←</span>
-
-              <div className="pd-back-text">
-                <span className="pd-back-label">Regresar a tienda</span>
-                <span className="pd-back-sub">
-                  Seguir viendo más productos
-                </span>
-              </div>
-            </button>
-          </div>
+          <button
+            type="button"
+            className="pd-back-btn"
+            onClick={handleBack}
+          >
+            <span className="pd-back-icon">←</span>
+            <span className="pd-back-label">Regresar a tienda</span>
+          </button>
         </div>
         <p className="pd-status">No se encontró el producto.</p>
       </main>
     );
   }
 
-  // Vista principal
   return (
     <main className="product-page">
       {/* Barra superior para regresar */}
@@ -248,32 +218,61 @@ export default function ProductoDetalle() {
           className="pd-back-btn"
           onClick={handleBack}
         >
-          REGRESAR A TIENDA
+          <span className="pd-back-icon">←</span>
+          <span className="pd-back-label">Regresar a tienda</span>
         </button>
       </div>
 
       {/* Layout principal */}
       <section className="pd-layout">
-        {/* Imagen grande del producto */}
+        {/* Imagen grande del producto con marco mejorado */}
         <div className="pd-image-card">
-          {imageSrc && (
-            <img
-              src={imageSrc}
-              alt={producto.tituloProducto || producto.nombre}
-              className="pd-image"
-            />
-          )}
+          <div className="pd-image-inner">
+            {imageSrc && (
+              <img
+                src={imageSrc}
+                alt={producto.tituloProducto || producto.nombre}
+                className="pd-image"
+              />
+            )}
+
+            <div className="pd-image-gradient" />
+
+            <div className="pd-image-badge">
+              <span className="pd-image-badge-main">MercaUca</span>
+              <span className="pd-image-badge-sub">Producto destacado</span>
+            </div>
+
+            <div className="pd-image-price-tag">
+              <span className="pd-image-price-label">Desde</span>
+              <span className="pd-image-price-value">
+                ${unitPrice.toFixed(2)}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Info del producto */}
         <div className="pd-info">
-          <h1 className="pd-title">
-            {producto.tituloProducto || producto.nombre}
-          </h1>
+          {/* Badge + título + código */}
+          <div className="pd-header-block">
+            <span className="pd-chip-category">Artículo de catálogo</span>
+            <h1 className="pd-title">
+              {producto.tituloProducto || producto.nombre}
+            </h1>
+            <div className="pd-meta-row">
+              <span className="pd-meta-pill">
+                Código: <strong>{codigoProducto}</strong>
+              </span>
+              <span className="pd-meta-pill pd-meta-pill-soft">
+                Disponible · Compra segura
+              </span>
+            </div>
+          </div>
 
           {/* Precio unitario */}
           <div className="pd-price-row">
-            <span className="pd-price-label">Precio unidad</span>
+            <span className="pd-price-label">Precio por unidad</span>
             <span className="pd-price-value">
               ${unitPrice.toFixed(2)}
             </span>
@@ -302,10 +301,13 @@ export default function ProductoDetalle() {
                   +
                 </button>
               </div>
+              <span className="pd-qty-hint">
+                Ajusta la cantidad antes de agregarlo a tu carrito.
+              </span>
             </div>
 
             <div className="pd-total-block">
-              <span className="pd-block-title">Precio total</span>
+              <span className="pd-block-title">Resumen</span>
               <div className="pd-total-row">
                 <span className="pd-total-label">
                   {cantidad} x ${unitPrice.toFixed(2)}
@@ -314,26 +316,39 @@ export default function ProductoDetalle() {
                   ${totalPrice.toFixed(2)}
                 </span>
               </div>
+              <span className="pd-total-hint">
+                El precio puede variar al aplicar envío o promociones.
+              </span>
             </div>
           </div>
 
           {/* Descripción */}
           <div className="pd-description">
-            <h2 className="pd-subtitle">DESCRIPCIÓN</h2>
+            <h2 className="pd-subtitle">DESCRIPCIÓN DEL PRODUCTO</h2>
             <p className="pd-description-text">
               {descripcion ||
-                "Descripción no disponible por el momento."}
+                "Descripción no disponible por el momento. Pronto agregaremos más información sobre este producto."}
             </p>
           </div>
 
-          {/* Botón agregar al carrito */}
+          {/* Botón agregar al carrito (diseño mejorado) */}
           <button
             type="button"
-            className="pd-add-btn"
+            className="pd-add-btn pd-add-btn-elevated"
             onClick={handleAddToCart}
             disabled={adding}
           >
-            {adding ? "Agregando..." : "Agregar al carrito"}
+            <div className="pd-add-left">
+              <span className="pd-add-main">
+                {adding ? "Agregando al carrito…" : "Agregar al carrito"}
+              </span>
+              <span className="pd-add-sub">
+                Total estimado: ${totalPrice.toFixed(2)} USD
+              </span>
+            </div>
+            <span className="pd-add-icon">
+              🛒
+            </span>
           </button>
         </div>
       </section>
@@ -346,7 +361,7 @@ export default function ProductoDetalle() {
         >
           <div
             className={`pd-toast pd-toast-${feedbackType}`}
-            onClick={(e) => e.stopPropagation()} // que no se cierre si hace click dentro
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="pd-toast-icon">
               {feedbackType === "success" ? "✔" : "✖"}

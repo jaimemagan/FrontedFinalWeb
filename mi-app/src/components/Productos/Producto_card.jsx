@@ -21,11 +21,18 @@ export default function ProductoCard({
       state: {
         producto: {
           ...(producto || {}),
-          imgSrc, // 🔥 la imagen que ya mostramos en la card
+          imgSrc, // imagen ya resuelta en la card
         },
       },
     });
   };
+
+  // Intentamos extraer un código de producto si existe
+  const codigo =
+    producto?.idProductoVariante ||
+    producto?.idProducto ||
+    producto?.id ||
+    null;
 
   return (
     <div className="producto">
@@ -35,16 +42,41 @@ export default function ProductoCard({
         className="producto__link"
         aria-label={`Ver detalle: ${nombre}`}
       >
-        <img
-          className="producto__imagen"
-          src={imgSrc}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-        />
+        {/* Imagen + badges */}
+        <div className="producto__image-wrap">
+          <img
+            className="producto__imagen"
+            src={imgSrc}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+          />
+
+          <div className="producto__badge">
+            <span className="producto__badge-main">MercaUca</span>
+            <span className="producto__badge-sub">Ver detalle</span>
+          </div>
+
+          <div className="producto__price-pill">
+            <span className="producto__price-label">Desde</span>
+            <span className="producto__price-value">{precio}</span>
+          </div>
+        </div>
+
+        {/* Info inferior */}
         <div className="producto__informacion">
           <p className="producto__nombre">{nombre}</p>
-          <p className="producto__precio">{precio}</p>
+
+          <div className="producto__meta-row">
+            {codigo && (
+              <span className="producto__sku">
+                #{codigo}
+              </span>
+            )}
+            <span className="producto__meta">
+              Entrega rápida · Pago seguro
+            </span>
+          </div>
         </div>
       </a>
     </div>
